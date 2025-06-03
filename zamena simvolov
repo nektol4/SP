@@ -1,0 +1,44 @@
+section .data
+    ; Исходная строка (используем ASCII символы для простоты)
+    input_string db "operator", 0
+    input_len equ $ - input_string - 1  ; Длина строки без нуль-терминатора
+
+section .text
+    global main
+
+main:
+    mov rbp, rsp; for correct debugging
+    mov rsi, input_string  ; Указатель на начало строки
+    mov rcx, input_len     ; Счетчик цикла по длине строки
+
+replace_loop:
+    mov al, [rsi]          ; Загружаем текущий символ
+
+    ; Проверяем на строчную 'o' (латинскую)
+    cmp al, 'o'
+    je replace_with_zero
+
+    ; Проверяем на заглавную 'O' (латинскую)
+    cmp al, 'O'
+    je replace_with_zero
+
+    jmp next_char          ; Если не 'o' и не 'O', переходим к следующему символу
+
+replace_with_zero:
+    mov byte [rsi], '0'    ; Заменяем символ на '0'
+
+next_char:
+    inc rsi                ; Переходим к следующему символу
+    loop replace_loop      ; Повторяем цикл
+    
+    ; Вывод результата (для демонстрации)
+    mov rax, 1             ; sys_write
+    mov rdi, 1             ; stdout
+    mov rsi, input_string
+    mov rdx, input_len
+    syscall
+
+    ; Завершение программы
+    mov rax, 60            ; sys_exit
+    xor rdi, rdi           ; код возврата 0
+    syscall
