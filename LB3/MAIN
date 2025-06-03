@@ -1,0 +1,38 @@
+from Stack import Stack
+from Register import Register
+
+
+def main():
+
+    stack = Stack(size=3)
+
+    stack.push(10)
+    stack.push(-5)
+    assert stack.pop() == -5
+    assert stack.pop() == 10
+
+
+    try:
+        stack.push(1)
+        stack.push(2)
+        stack.push(3)
+        stack.push(4)
+    except Exception as e:
+        assert str(e) == "Stack overflow"
+
+    stack.clear()
+    try:
+        stack.pop()
+    except Exception as e:
+        assert str(e) == "Stack underflow"
+
+    stack.push(0)
+    assert stack.registers[0].flags.zero == 1
+    stack.push(-42)
+    assert stack.registers[1].flags.negative == 1
+
+    print("Все тесты пройдены успешно!")
+
+
+if __name__ == "__main__":
+    main()
